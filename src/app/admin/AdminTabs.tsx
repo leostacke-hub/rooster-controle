@@ -18,6 +18,7 @@ import {
   Edit, 
   Check, 
   X, 
+  Menu,
   ArrowUpDown, 
   Save, 
   FileDown, 
@@ -60,6 +61,7 @@ export default function AdminTabs({ session, onLogout }: AdminTabsProps) {
   const [activeTab, setActiveTab] = useState<
     "dashboard" | "leads" | "events" | "portfolio" | "galeria" | "pacotes" | "servicos" | "beneficios" | "depoimentos" | "diferenciais" | "configuracoes" | "conta_seguranca"
   >("dashboard");
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Database States
   const [leads, setLeads] = useState<any[]>([]);
@@ -1716,24 +1718,72 @@ export default function AdminTabs({ session, onLogout }: AdminTabsProps) {
   }, [currentEditItem, activeTab, portfolio, photos, packages, services, benefits, testimonials]);
 
   return (
-    <div className="min-h-screen md:h-screen md:overflow-hidden bg-[#070709] text-zinc-100 flex flex-col md:flex-row w-full">
-      {/* Sidebar Admin Panel Navigation */}
-      <aside className="w-full md:w-64 md:min-w-[256px] md:max-w-[256px] bg-[#0b0b0d] border-b md:border-b-0 md:border-r border-zinc-900 flex flex-col justify-between p-4 md:h-screen md:overflow-y-auto flex-shrink-0">
-        <div>
-          <div className="flex items-center gap-2 mb-5 pb-3 border-b border-zinc-900">
-            <div className="h-8 w-8 rounded-lg bg-gold-400/10 border border-gold-400/25 flex items-center justify-center flex-shrink-0 p-1.5">
+    <div className="min-h-screen lg:h-screen lg:overflow-hidden bg-[#070709] text-zinc-100 flex flex-col lg:flex-row w-full">
+      {/* Mobile Sticky Header */}
+      <header className="sticky top-0 z-40 lg:hidden w-full bg-[#050505]/95 backdrop-blur-sm border-b border-zinc-900 px-4 py-3 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => setIsMobileMenuOpen(true)}
+            className="p-1.5 -ml-1 rounded-lg hover:bg-zinc-900 text-zinc-400 hover:text-white transition-colors cursor-pointer"
+            aria-label="Abrir menu"
+          >
+            <Menu className="h-6 w-6" />
+          </button>
+          <div className="flex items-center gap-2">
+            <div className="h-6 w-6 rounded bg-gold-400/10 border border-gold-400/25 flex items-center justify-center p-1">
               <img 
                 src="/Fotos/logotipo rooster weddings S FUNDO.png" 
                 alt="Rooster Films Logo" 
                 className="h-full w-full object-contain"
               />
             </div>
-            <div className="text-left">
-              <h2 className="font-serif text-[11.5px] tracking-widest text-white uppercase font-bold">ROOSTER FILMS</h2>
-              <span className="text-[8.5px] uppercase tracking-[0.2em] text-gold-450 block font-semibold">Admin Panel</span>
-            </div>
+            <h2 className="font-serif text-[11px] tracking-widest text-white uppercase font-bold">ROOSTER FILMS</h2>
           </div>
- 
+        </div>
+        <div className="text-[9px] uppercase tracking-widest bg-gold-950/45 text-gold-400 border border-gold-900/35 px-2 py-0.5 rounded font-mono">
+          {activeEventType}
+        </div>
+      </header>
+
+      {/* Mobile Drawer Overlay */}
+      <div 
+        className={`fixed inset-0 z-50 bg-black/60 backdrop-blur-sm lg:hidden transition-opacity duration-300 ${
+          isMobileMenuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+        }`}
+        onClick={() => setIsMobileMenuOpen(false)}
+      />
+
+      {/* Mobile Drawer (Sidebar) */}
+      <aside 
+        className={`fixed inset-y-0 left-0 z-50 w-72 max-w-[80vw] bg-[#050505] border-r border-zinc-900 flex flex-col justify-between p-4 transform transition-transform duration-250 ease-out lg:hidden h-full overflow-y-auto ${
+          isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
+        <div>
+          <div className="flex items-center justify-between mb-5 pb-3 border-b border-zinc-900">
+            <div className="flex items-center gap-2">
+              <div className="h-8 w-8 rounded-lg bg-gold-400/10 border border-gold-400/25 flex items-center justify-center p-1.5">
+                <img 
+                  src="/Fotos/logotipo rooster weddings S FUNDO.png" 
+                  alt="Rooster Films Logo" 
+                  className="h-full w-full object-contain"
+                />
+              </div>
+              <div className="text-left">
+                <h2 className="font-serif text-[11.5px] tracking-widest text-white uppercase font-bold">ROOSTER FILMS</h2>
+                <span className="text-[8.5px] uppercase tracking-[0.2em] text-gold-450 block font-semibold">Admin Panel</span>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="p-1.5 rounded-lg hover:bg-zinc-900 text-zinc-400 hover:text-white transition-colors cursor-pointer"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
+  
           {/* Global Experience Switcher */}
           <div className="mb-4 flex flex-col gap-1.5 bg-black/40 border border-zinc-900 rounded-lg p-2.5">
             <label className="text-[8.5px] uppercase tracking-widest text-zinc-500 font-semibold text-left pl-1">Experiência Ativa</label>
@@ -1774,7 +1824,122 @@ export default function AdminTabs({ session, onLogout }: AdminTabsProps) {
               </button>
             </div>
           </div>
- 
+  
+          <nav className="space-y-1 text-left">
+            {[
+              { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
+              { id: "leads", label: "Leads / CRM", icon: Users },
+              { id: "events", label: "Eventos & Produção", icon: Calendar },
+              { id: "portfolio", label: "Portfólio", icon: Video },
+              { id: "galeria", label: "Galeria de Fotos", icon: ImageIcon },
+              { id: "pacotes", label: "Sugestões de Pacotes", icon: Package },
+              { id: "servicos", label: "Serviços e Valores", icon: DollarSign },
+              { id: "beneficios", label: "Regras de Benefícios", icon: Award },
+              { id: "depoimentos", label: "Depoimentos", icon: MessageSquare },
+              { id: "diferenciais", label: "Diferenciais", icon: Sparkles },
+              { id: "configuracoes", label: "Configurações Gerais", icon: Settings },
+              { id: "conta_seguranca", label: "Conta e Segurança", icon: Lock }
+            ].map((tab) => {
+              const Icon = tab.icon;
+              const isActive = activeTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => {
+                    setActiveTab(tab.id as any);
+                    setSelectedLead(null);
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className={`w-full px-3 py-3 rounded-lg text-[10.5px] tracking-wider uppercase font-semibold flex items-center gap-2.5 transition-colors cursor-pointer min-h-[48px] ${
+                    isActive 
+                      ? "bg-gold-400 text-black shadow-lg shadow-gold-500/5 font-bold"
+                      : "text-zinc-400 hover:bg-zinc-900/60 hover:text-white"
+                  }`}
+                >
+                  <Icon className="h-3.5 w-3.5" />
+                  {tab.label}
+                </button>
+              );
+            })}
+          </nav>
+        </div>
+  
+        <div className="pt-4 border-t border-zinc-900 mt-4">
+          <div className="flex items-center justify-between text-[10.5px] text-zinc-500 mb-3 px-1.5">
+            <span className="truncate max-w-[100px]">{session?.user?.email}</span>
+            <span className="text-[8.5px] bg-gold-950/45 text-gold-400 border border-gold-900/35 px-1 py-0.5 rounded font-mono">ADMIN</span>
+          </div>
+          <button
+            onClick={() => {
+              setIsMobileMenuOpen(false);
+              onLogout();
+            }}
+            className="w-full px-3 py-3 rounded-lg text-[10.5px] tracking-wider uppercase font-semibold border border-zinc-900 hover:border-red-500/25 hover:bg-red-500/[0.02] text-zinc-400 hover:text-red-400 flex items-center justify-center gap-2 cursor-pointer transition-colors min-h-[48px]"
+          >
+            <LogOut className="h-3.5 w-3.5" />
+            Sair do Painel
+          </button>
+        </div>
+      </aside>
+
+      {/* Sidebar Admin Panel Navigation - Desktop */}
+      <aside className="hidden lg:flex lg:flex-col lg:w-64 lg:min-w-[256px] lg:max-w-[256px] bg-[#0b0b0d] lg:border-r border-zinc-900 justify-between p-4 lg:h-screen lg:overflow-y-auto flex-shrink-0">
+        <div>
+          <div className="flex items-center gap-2 mb-5 pb-3 border-b border-zinc-900">
+            <div className="h-8 w-8 rounded-lg bg-gold-400/10 border border-gold-400/25 flex items-center justify-center flex-shrink-0 p-1.5">
+              <img 
+                src="/Fotos/logotipo rooster weddings S FUNDO.png" 
+                alt="Rooster Films Logo" 
+                className="h-full w-full object-contain"
+              />
+            </div>
+            <div className="text-left">
+              <h2 className="font-serif text-[11.5px] tracking-widest text-white uppercase font-bold">ROOSTER FILMS</h2>
+              <span className="text-[8.5px] uppercase tracking-[0.2em] text-gold-450 block font-semibold">Admin Panel</span>
+            </div>
+          </div>
+  
+          {/* Global Experience Switcher */}
+          <div className="mb-4 flex flex-col gap-1.5 bg-black/40 border border-zinc-900 rounded-lg p-2.5">
+            <label className="text-[8.5px] uppercase tracking-widest text-zinc-500 font-semibold text-left pl-1">Experiência Ativa</label>
+            <select
+              value={activeEventType}
+              onChange={(e) => {
+                setActiveEventType(e.target.value as any);
+              }}
+              className="w-full px-2 py-1.5 bg-zinc-950 border border-zinc-800 rounded text-[10.5px] uppercase tracking-wider text-zinc-200 focus:outline-none focus:border-gold-450 cursor-pointer font-bold"
+            >
+              <option value="casamento">Casamento</option>
+              <option value="aniversario">Aniversário</option>
+              <option value="revelacao">Revelação</option>
+            </select>
+
+            <div className="mt-2 pt-2 border-t border-zinc-900/50 flex items-center justify-between gap-1">
+              <a 
+                href={settings?.site_url?.startsWith("http") ? settings.site_url : (typeof window !== "undefined" ? window.location.origin + (settings?.site_url || `/${activeEventType}`) : `/${activeEventType}`)}
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-[10px] text-zinc-400 hover:text-gold-400 transition-colors truncate flex items-center gap-1 font-medium select-none"
+                title="Visualizar site publicado"
+              >
+                <ExternalLink className="h-3 w-3 flex-shrink-0" />
+                <span className="truncate">{settings?.site_url || `/${activeEventType}`}</span>
+              </a>
+              <button
+                type="button"
+                onClick={() => {
+                  const url = settings?.site_url?.startsWith("http") ? settings.site_url : (typeof window !== "undefined" ? window.location.origin + (settings?.site_url || `/${activeEventType}`) : `/${activeEventType}`);
+                  navigator.clipboard.writeText(url);
+                  alert("Link do site copiado para a área de transferência:\n" + url);
+                }}
+                className="p-1 hover:bg-zinc-900 rounded text-zinc-500 hover:text-zinc-200 transition-colors flex-shrink-0 cursor-pointer"
+                title="Copiar link do site"
+              >
+                <Copy className="h-3 w-3" />
+              </button>
+            </div>
+          </div>
+  
           <nav className="space-y-1 text-left">
             {[
               { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -1812,7 +1977,7 @@ export default function AdminTabs({ session, onLogout }: AdminTabsProps) {
             })}
           </nav>
         </div>
- 
+  
         <div className="pt-4 border-t border-zinc-900 mt-4">
           <div className="flex items-center justify-between text-[10.5px] text-zinc-500 mb-3 px-1.5">
             <span className="truncate max-w-[100px]">{session?.user?.email}</span>
@@ -1829,7 +1994,7 @@ export default function AdminTabs({ session, onLogout }: AdminTabsProps) {
       </aside>
 
       {/* Main Admin Working Area */}
-      <main className="flex-1 min-w-0 overflow-y-auto md:h-screen bg-[#070709]">
+      <main className="flex-1 min-w-0 overflow-y-auto lg:h-screen bg-[#070709]">
         <div className="p-6 md:p-10 max-w-7xl mx-auto w-full">
         {loadingData ? (
           <div className="h-full flex flex-col items-center justify-center">
