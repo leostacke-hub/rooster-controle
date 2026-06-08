@@ -354,8 +354,6 @@ alter table settings add column if not exists testimonial_transition_speed integ
 alter table settings add column if not exists testimonial_autoplay boolean not null default true;
 alter table settings add column if not exists testimonial_style text not null default 'classico';
 
-on conflict do nothing;
-
 -- Seed initial testimonials
 insert into testimonials (client_name, subtitle, quote, stars, image_url, event_type, active, display_order) values
 ('Julia & Ricardo', 'Fazenda Vila Rica, Itatiba - SP', 'Não temos palavras para descrever o que foi assistir ao nosso filme pela primeira vez. A equipe da Rooster Films conseguiu capturar a essência da nossa emoção de uma forma inexplicável.', 5, 'https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=150&h=150&q=80', 'casamento', true, 1),
